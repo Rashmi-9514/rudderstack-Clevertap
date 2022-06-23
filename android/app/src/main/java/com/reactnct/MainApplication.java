@@ -1,6 +1,7 @@
 package com.reactnct;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 
-public class MainApplication extends Application implements ReactApplication, CTPushNotificationListener {
+public class MainApplication extends Application implements ReactApplication{
 
     private static final String TAG = "MainApplication";
 
@@ -59,8 +60,8 @@ public class MainApplication extends Application implements ReactApplication, CT
 
     @Override
     public void onCreate() {
-        CleverTapAPI.setDebugLevel(3);
-        CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
+          CleverTapAPI.setDebugLevel(3);
+//        CleverTapAPI.getDefaultInstance(getApplicationContext()).enableDeviceNetworkInfoReporting(true);
 
         ActivityLifecycleCallback.register(this); // this done instead of android:name in your AndroidManifest.xml
                                                   // application tag to com.clevertap.android.sdk.Application
@@ -68,8 +69,9 @@ public class MainApplication extends Application implements ReactApplication, CT
 
         SoLoader.init(this, /* native exopackage */ false);
         initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-        CleverTapAPI.getDefaultInstance(this).setCTPushNotificationListener(this);// Workaround when app is in killed
+       //CleverTapAPI.getDefaultInstance(this).setCTPushNotificationListener(this);// Workaround when app is in killed
                                                                                   // state
+        //CleverTapAPI.createNotificationChannel(getApplicationContext(),"1","Rudderstack","Your Channel Description", 5,true);
 
     }
 
@@ -104,7 +106,7 @@ public class MainApplication extends Application implements ReactApplication, CT
     }
 
     // Push Notification Clicked callback workaround when app is in killed state
-    @Override
+
     public void onNotificationClickedPayloadReceived(HashMap<String, Object> payload) {
         Log.e("MainApplication", "onNotificationClickedPayloadReceived called");
         final String CLEVERTAP_PUSH_NOTIFICATION_CLICKED = "CleverTapPushNotificationClicked";

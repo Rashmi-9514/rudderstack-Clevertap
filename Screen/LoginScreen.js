@@ -16,17 +16,45 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
+const CleverTap = require('clevertap-react-native');
+
+
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  recordScreenViews:true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
 
 import Loader from './Components/Loader';
 
 const LoginScreen = ({navigation}) => {
+  
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [userID, setUserID] = useState('');
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
 
   const passwordInputRef = createRef();
-
+  useFocusEffect(
+    React.useCallback(() => {
+      alert('Screen was focused');
+      rudderClient.track("Login Screen");
+      console.log("Login Screen");
+      // Do something when the screen is focused
+      return () => {
+        alert('Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
   const handleSubmitPress = () => {
     setErrortext('');
     if (!userEmail) {
@@ -37,11 +65,24 @@ const LoginScreen = ({navigation}) => {
       alert('Please fill Password');
       return;
     }
-  
-          navigation.replace('DrawerNavigationRoutes');
-        
-  
+    else{
+          
+       
+           rudderClient.identify(userID, {
+            'Email': userEmail, 
+             'Identity':userID,
+
+          })
+          rudderClient.track("User Login");
+       
       }
+
+      navigation.replace('DrawerNavigationRoutes'); 
+     CleverTap.getCleverTapID((err, res) => {
+            console.log('CleverTapID after login', res, err);
+           // alert(`CleverTapID: \n ${res}`);
+          });
+    }
 
   return (
     <View style={styles.mainBody}>
@@ -75,7 +116,7 @@ const LoginScreen = ({navigation}) => {
                   setUserEmail(UserEmail)
                 }
                 placeholder="Enter Email" //dummy@abc.com
-                placeholderTextColor="#8b9cb5"
+                placeholderTextColor="#8365db"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 returnKeyType="next"
@@ -90,11 +131,27 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.SectionStyle}>
               <TextInput
                 style={styles.inputStyle}
+                onChangeText={(userID) =>
+                  setUserID(userID)
+                }
+                placeholder="Enter ID" //dummy@abc.com
+                placeholderTextColor="#8365db"
+                autoCapitalize="none"
+                keyboardType="name-phone-pad"
+                returnKeyType="next"
+                onSubmitEditing={Keyboard.dismiss}
+                underlineColorAndroid="#f000"
+                blurOnSubmit={false}
+              />
+            </View>
+            <View style={styles.SectionStyle}>
+              <TextInput
+                style={styles.inputStyle}
                 onChangeText={(UserPassword) =>
                   setUserPassword(UserPassword)
                 }
                 placeholder="Enter Password" //12345
-                placeholderTextColor="#8b9cb5"
+                placeholderTextColor="#8365db"
                 keyboardType="default"
                 ref={passwordInputRef}
                 onSubmitEditing={Keyboard.dismiss}
@@ -132,7 +189,7 @@ const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#307ecc',
+    backgroundColor: '#f8ad9d',
     alignContent: 'center',
   },
   SectionStyle: {
@@ -163,7 +220,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    color: 'white',
+    color: '#ea3636',
     paddingLeft: 15,
     paddingRight: 15,
     borderWidth: 1,

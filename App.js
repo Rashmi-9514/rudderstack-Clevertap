@@ -14,9 +14,33 @@ import SplashScreen from './Screen/SplashScreen';
 import LoginScreen from './Screen/LoginScreen';
 import RegisterScreen from './Screen/RegisterScreen';
 import DrawerNavigationRoutes from './Screen/DrawerNavigationRoutes';
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
 
+const CleverTap = require('clevertap-react-native');
+
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  recordScreenViews:true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+
+rudderClient.track("Home Screen");
+// await rudderClient.setup('2BC2W2MqaJRrbMNS6GUvn8XTLOP', {
+//   dataPlaneUrl: 'https://clevertapof.dataplane.rudderstack.com',
+//   trackLifecycleEvents: true,
+//   recordScreenViews: true,
+// })
+
+CleverTap.getCleverTapID((err, res) => {
+  console.log('CleverTapID before login', res, err);
+ // alert(`CleverTapID: \n ${res}`);
+});
+CleverTap.createNotificationChannel("1", "Clever Tap React Native Testing", "CT React Native Testing", 5, true);
 const Stack = createStackNavigator();
-
 const Auth = () => {
   // Stack Navigator for Login and Sign up Screen
   return (
@@ -32,7 +56,7 @@ const Auth = () => {
         options={{
           title: 'Register', //Set Header Title
           headerStyle: {
-            backgroundColor: '#307ecc', //Set Header color
+            backgroundColor: '#f4978e', //Set Header color 
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {

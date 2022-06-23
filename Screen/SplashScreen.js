@@ -10,8 +10,18 @@ import {
   Image
 } from 'react-native';
 
-import AsyncStorage from '@react-native-community/async-storage';
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
 
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+import AsyncStorage from '@react-native-community/async-storage';
+rudderClient.track("Splash Screen");
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
@@ -55,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#307ecc',
+    backgroundColor: '#ffdab9',
   },
   activityIndicator: {
     alignItems: 'center',

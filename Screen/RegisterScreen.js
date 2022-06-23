@@ -14,10 +14,39 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-
 import Loader from './Components/Loader';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
+const CleverTap = require('clevertap-react-native');
+
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  recordScreenViews:true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+
+
+
 
 const RegisterScreen = (props) => {
+ 
+  useFocusEffect(
+    React.useCallback(() => {
+      alert('Registration Screen was focused');
+      rudderClient.track("Registration Screen");
+      console.log("Registration Screen");
+      // Do something when the screen is focused
+      return () => {
+        alert('Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []) );
+
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userAge, setUserAge] = useState('');
@@ -94,6 +123,10 @@ const RegisterScreen = (props) => {
           console.log(
             'Registration Successful. Please Login to proceed'
           );
+          CleverTap.getCleverTapID((err, res) => {
+            console.log('CleverTapID after Registration', res, err);
+           // alert(`CleverTapID: \n ${res}`);
+          });
         } else {
           setErrortext(responseJson.msg);
         }
@@ -104,6 +137,10 @@ const RegisterScreen = (props) => {
         console.error(error);
       });
   };
+  CleverTap.getCleverTapID((err, res) => {
+    console.log('CleverTapID after Registration', res, err);
+   // alert(`CleverTapID: \n ${res}`);
+  });
   if (isRegistraionSuccess) {
     return (
       <View
@@ -126,7 +163,7 @@ const RegisterScreen = (props) => {
     );
   }
   return (
-    <View style={{flex: 1, backgroundColor: '#307ecc'}}>
+    <View style={{flex: 1, backgroundColor: '#f8ad9d'}}>
       <Loader loading={loading} />
       <ScrollView
         keyboardShouldPersistTaps="handled"
@@ -154,7 +191,7 @@ const RegisterScreen = (props) => {
               onChangeText={(UserName) => setUserName(UserName)}
               underlineColorAndroid="#f000"
               placeholder="Enter Name"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#8365db"
               autoCapitalize="sentences"
               returnKeyType="next"
               onSubmitEditing={() =>
@@ -169,7 +206,7 @@ const RegisterScreen = (props) => {
               onChangeText={(UserEmail) => setUserEmail(UserEmail)}
               underlineColorAndroid="#f000"
               placeholder="Enter Email"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#8365db"
               keyboardType="email-address"
               ref={emailInputRef}
               returnKeyType="next"
@@ -188,7 +225,7 @@ const RegisterScreen = (props) => {
               }
               underlineColorAndroid="#f000"
               placeholder="Enter Password"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#8365db"
               ref={passwordInputRef}
               returnKeyType="next"
               secureTextEntry={true}
@@ -205,7 +242,7 @@ const RegisterScreen = (props) => {
               onChangeText={(UserAge) => setUserAge(UserAge)}
               underlineColorAndroid="#f000"
               placeholder="Enter Age"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#8365db"
               keyboardType="numeric"
               ref={ageInputRef}
               returnKeyType="next"
@@ -224,7 +261,7 @@ const RegisterScreen = (props) => {
               }
               underlineColorAndroid="#f000"
               placeholder="Enter Address"
-              placeholderTextColor="#8b9cb5"
+              placeholderTextColor="#8365db"
               autoCapitalize="sentences"
               ref={addressInputRef}
               returnKeyType="next"

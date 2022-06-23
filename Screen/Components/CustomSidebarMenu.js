@@ -13,6 +13,20 @@ import {
 } from '@react-navigation/drawer';
 
 import AsyncStorage from '@react-native-community/async-storage';
+//Rudderstack code
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
+
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+
+
+
 
 const CustomSidebarMenu = (props) => {
   return (
@@ -68,7 +82,9 @@ const CustomSidebarMenu = (props) => {
                   text: 'Confirm',
                   onPress: () => {
                     AsyncStorage.clear();
+                    rudderClient.track("User Logout");
                     props.navigation.replace('Auth');
+                   
                   },
                 },
               ],

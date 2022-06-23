@@ -5,7 +5,31 @@
 import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+// rudderClient.track("Settings Screen");
 const SettingsScreen = () => {
+
+  useFocusEffect(
+    React.useCallback(() => {
+      alert('Settings Screen was focused');
+      rudderClient.track("Settings Screen");
+      console.log("Settings Screen");
+      // Do something when the screen is focused
+      return () => {
+        alert('Settings Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []) );
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1, padding: 16}}>

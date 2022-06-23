@@ -5,7 +5,32 @@
 import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 
+import rudderClient from '@rudderstack/rudder-sdk-react-native';
+import clevertap from "@rudderstack/rudder-integration-clevertap-react-native";
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+
+const config = {
+  dataPlaneUrl : "https://clevertapof.dataplane.rudderstack.com", 
+  logLevel: 3,
+  trackAppLifecycleEvents: true,
+  withFactories: [clevertap]
+};
+rudderClient.setup("2BC2W2MqaJRrbMNS6GUvn8XTLOP", config); 
+//rudderClient.track("Home Screen");
 const HomeScreen = () => {
+ 
+  useFocusEffect(
+    React.useCallback(() => {
+      alert('Home Screen was focused');
+      rudderClient.track("Home Screen");
+      console.log("Home Screen");
+      // Do something when the screen is focused
+      return () => {
+        alert('Home Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []) );
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1, padding: 16}}>
